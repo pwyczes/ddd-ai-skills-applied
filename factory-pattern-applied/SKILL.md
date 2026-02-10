@@ -510,10 +510,10 @@ class ShipmentLabelFactoryTest {
 
 ## Quick Reference
 
-**Creation signals**: Fat constructors, multiple construction strategies, external dependencies, multi-step assembly, complex validation
-**Design choice**: Static factory method (simple) vs Factory class (complex)
-**Implementation**: Dumb constructor + factory with intention-revealing methods
-**Benefits**: Better testing, encapsulation, explicit domain modeling
+**Creation signals**: Fat constructors, multiple construction strategies, external dependencies, multi-step assembly, complex validation  
+**Design choice**: Static factory method (simple) vs Factory class (complex)  
+**Implementation**: Dumb constructor + factory with intention-revealing methods  
+**Benefits**: Better testing, encapsulation, explicit domain modeling  
 **Verification**: Simple constructor, logic in factory, same Bounded Context, tested separately
 
 ---

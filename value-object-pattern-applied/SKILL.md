@@ -67,10 +67,10 @@ When parameters naturally travel together:
 
 ```java
 // Before: Parameter clusters
-void calculateShipping(String country, String city, String postalCode, String street) { }
+void estimateShippingCost(String country, String city, String postalCode, String street) { }
 
 // After: Cohesive Value Object
-void calculateShipping(Address address) { }
+void estimateShippingCost(Address address) { }
 ```
 
 ### 3. Hidden Concepts
@@ -93,7 +93,7 @@ When calculations produce meaningful domain values:
 // Before: Scattered pricing logic
 BigDecimal basePrice = getPrice();
 BigDecimal discount = getDiscount();
-BigDecimal tax = calculateTax(basePrice.subtract(discount));
+BigDecimal tax = taxFor(basePrice.subtract(discount));
 BigDecimal total = basePrice.subtract(discount).add(tax);
 
 // After: Named intermediate concept
@@ -482,19 +482,19 @@ record PricingBreakdown(
         Money subtotal,
         Optional<Discount> discount,
         Money tax) {
-    static PricingBreakdown calculate(List<LineItem> items, Optional<DiscountCode> code) {
+    static PricingBreakdown from(List<LineItem> items, Optional<DiscountCode> code) {
         final Money subtotal = items.stream()
                 .map(LineItem::total)
                 .reduce(Money.zero(), Money::add);
 
         final Optional<Discount> discount = code
-                .flatMap(c -> c.calculateDiscount(subtotal));
+                .flatMap(c -> c.discountFor(subtotal));
 
         final Money afterDiscount = discount
                 .map(d -> d.applyTo(subtotal))
                 .orElse(subtotal);
 
-        final Money tax = Tax.calculate(afterDiscount);
+        final Money tax = Tax.forAmount(afterDiscount);
         
         return new PricingBreakdown(subtotal, discount, tax);
     }
@@ -657,10 +657,10 @@ class WishListTest {
 
 ## Quick Reference
 
-**Creation signals**: Primitive clusters, repeated validation, hidden concepts, intermediate results, merge/combine logic, collection operations
-**Design keys**: Intention-revealing names (class + methods), immutability, side-effect-free functions, Optional for optionals, algebraic operations, single Bounded Context
-**Red flags**: No domain meaning, identity matters, requires mutation, pure DTO, crosses Bounded Contexts
-**Implementation**: Java record + factory methods + side-effect-free functions + algebra + toString override
+**Creation signals**: Primitive clusters, repeated validation, hidden concepts, intermediate results, merge/combine logic, collection operations  
+**Design keys**: Intention-revealing names (class + methods), immutability, side-effect-free functions, Optional for optionals, algebraic operations, single Bounded Context  
+**Red flags**: No domain meaning, identity matters, requires mutation, pure DTO, crosses Bounded Contexts  
+**Implementation**: Java record + factory methods + side-effect-free functions + algebra + toString override  
 **Verification**: Immutable, single BC, encapsulated logic, intention-revealing interface, side-effect-free, tested
 
 ---
